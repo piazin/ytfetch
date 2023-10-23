@@ -1,3 +1,3 @@
 export interface CreateVideoDownloadDto {
-  url: string;
+  youtubeVideoUrl: string;
 }

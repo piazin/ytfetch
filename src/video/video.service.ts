@@ -1,5 +1,6 @@
-import Bull, { Queue } from 'bull';
 import { Video } from '@if/video';
+import Bull, { Queue } from 'bull';
+import { randomUUID } from 'crypto';
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 import { CreateVideoDownloadDto } from '@dto/video';
@@ -11,10 +12,21 @@ export class VideoService {
     private videoDownloadQueue: Queue<Video>,
   ) {}
 
-  async addToQueue(
-    createVideoDownloadDto: CreateVideoDownloadDto,
-  ): Promise<Bull.JobId> {
-    const job = await this.videoDownloadQueue.add(createVideoDownloadDto);
-    return job.id;
+  async addToQueue(createVideoDownloadDto: CreateVideoDownloadDto) {
+    const jobId = randomUUID();
+    const sessionId = randomUUID();
+
+    const cratedJob = await this.videoDownloadQueue.add(
+      {
+        youtubeVideoUrl: createVideoDownloadDto.youtubeVideoUrl,
+        sessionId,
+      },
+      { jobId },
+    );
+
+    return {
+      jobId,
+      sessionId,
+    };
   }
 }

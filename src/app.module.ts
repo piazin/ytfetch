@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
 import { AppController } from './app.controller';
 import { VideoModule } from './video/video.module';
+import { EventsModule } from './events/events.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
@@ -20,8 +21,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
       inject: [ConfigService],
     }),
+    EventsModule,
   ],
   controllers: [AppController],
-  providers: [],
 })
 export class AppModule {}

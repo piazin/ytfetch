@@ -1,3 +1,4 @@
 export interface Video {
-  url: string;
+  youtubeVideoUrl: string;
+  sessionId: string;
 }
