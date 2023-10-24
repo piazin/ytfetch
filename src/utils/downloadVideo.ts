@@ -1,7 +1,13 @@
 import * as fs from 'fs';
 import * as ytdl from 'ytdl-core';
 
-export async function downloadVideo(
+/**
+ * @description Downloads a video from YouTube
+ * @param youtubeVideoUrl The URL of the YouTube video
+ * @param traceProgress A callback function that will be called with the progress of the download
+ * @returns The path to the downloaded video
+ */
+export async function downloadVideoFromYoutube(
   youtubeVideoUrl: string,
   traceProgress?: (progress: number) => void,
 ) {

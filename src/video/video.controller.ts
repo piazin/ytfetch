@@ -4,11 +4,15 @@ import {
   Body,
   Controller,
   Get,
+  Header,
   HttpCode,
   HttpStatus,
   Param,
   Post,
+  StreamableFile,
 } from '@nestjs/common';
+import { join } from 'path';
+import { createReadStream } from 'fs';
 
 @Controller('video')
 export class VideoController {
@@ -29,10 +33,18 @@ export class VideoController {
   }
 
   @Get(':jobId')
-  async getJobStatus(@Param('jobId') jobId: string) {
+  async getVideoJobStatus(@Param('jobId') jobId: string) {
     const job = await this.videoService.getJobStatus(jobId);
     return {
       job,
     };
+  }
+
+  @HttpCode(HttpStatus.PARTIAL_CONTENT)
+  @Get(':jobId/download')
+  @Header('Content-Type', 'apllication/json')
+  async downloadVideo(@Param('jobId') jobId: string) {
+    const file = createReadStream(join(process.cwd(), 'package.json'));
+    return new StreamableFile(file);
   }
 }

@@ -9,11 +9,19 @@ import { Job } from 'bull';
 import { Video } from '@if/video';
 import { Logger } from '@nestjs/common';
 import { Events } from 'src/events/enums/events.enum';
-import { downloadVideo } from '../utils/downloadVideo';
+import { downloadVideoFromYoutube } from '../utils/downloadVideo';
 import { EventsGateway } from '../events/events.gateway';
 
+/**
+ * @description A classe VideoProcessor é um processador de filas, que é responsável por processar os jobs da fila
+ * @method download: é o método que processa o job, ele é executado quando um job é adicionado na fila
+ * @method onActive: é executado quando um job é iniciado
+ * @method onCompleted: é executado quando um job é finalizado
+ * @method onFailed: é executado quando um job falha
+ */
 @Processor('video-download-queue')
 export class VideoProcessor {
+  private logger: Logger = new Logger(VideoProcessor.name);
   constructor(private eventsGateway: EventsGateway) {}
 
   @Process()
@@ -21,7 +29,7 @@ export class VideoProcessor {
     const { youtubeVideoUrl } = job.data;
     try {
       // quando usado a extensão live server do vscode, a pagina fica recarregando e não envia os eventos, use o html direto no navegador
-      const videoPath = await downloadVideo(youtubeVideoUrl);
+      const videoPath = await downloadVideoFromYoutube(youtubeVideoUrl);
       return videoPath;
     } catch (error) {
       job.moveToFailed({ message: error.message });
@@ -30,7 +38,7 @@ export class VideoProcessor {
 
   @OnQueueActive()
   onActive(job: Job) {
-    Logger.debug(
+    this.logger.debug(
       `Processing job ${job.id} of type ${job.name} with data ${JSON.stringify(
         job.data,
       )}`,
@@ -42,7 +50,7 @@ export class VideoProcessor {
 
   @OnQueueCompleted()
   onCompleted(job: Job<Video>) {
-    Logger.debug(`Job ${job.id} completed`);
+    this.logger.debug(`Job ${job.id} completed`);
 
     this.eventsGateway.pusblishEvent(Events.FINISHED_VIDEO_DOWNLOAD, {
       jobId: job.id,
@@ -52,7 +60,7 @@ export class VideoProcessor {
 
   @OnQueueFailed()
   onFailed(job: Job, err: Error) {
-    Logger.error(`Job ${job.id} failed, err: ${err.message}`);
+    this.logger.error(`Job ${job.id} failed, err: ${err.message}`);
 
     this.eventsGateway.pusblishEvent(Events.FAILED_VIDEO_DOWNLOAD, {
       jobId: job.id,
