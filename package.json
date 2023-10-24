@@ -31,8 +31,7 @@
     "bull": "^4.11.4",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
-    "socket.io": "^4.7.2",
-    "ytdl-core": "^4.11.5"
+    "socket.io": "^4.7.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
