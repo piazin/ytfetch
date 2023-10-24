@@ -19,7 +19,8 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@dto/video": ["src/video/dto/"],
-      "@if/video": ["src/video/interfaces/"]
+      "@if/video": ["src/video/interfaces/"],
+      "@res": ["src/responses"]
     }
   }
 }

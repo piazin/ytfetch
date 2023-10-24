@@ -1,9 +1,9 @@
+import { Queue } from 'bull';
 import { Video } from '@if/video';
-import Bull, { Queue } from 'bull';
 import { randomUUID } from 'crypto';
 import { InjectQueue } from '@nestjs/bull';
-import { Injectable } from '@nestjs/common';
 import { CreateVideoDownloadDto } from '@dto/video';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class VideoService {
@@ -12,21 +12,31 @@ export class VideoService {
     private videoDownloadQueue: Queue<Video>,
   ) {}
 
-  async addToQueue(createVideoDownloadDto: CreateVideoDownloadDto) {
+  async addToQueue({ youtubeVideoUrl }: CreateVideoDownloadDto) {
     const jobId = randomUUID();
-    const sessionId = randomUUID();
 
-    const cratedJob = await this.videoDownloadQueue.add(
+    const createdJob = await this.videoDownloadQueue.add(
       {
-        youtubeVideoUrl: createVideoDownloadDto.youtubeVideoUrl,
-        sessionId,
+        youtubeVideoUrl,
       },
       { jobId },
     );
 
     return {
-      jobId,
-      sessionId,
+      jobId: createdJob.id,
     };
+  }
+
+  async getJobState(jobId: string) {
+    try {
+      const job = await this.videoDownloadQueue.getJob(jobId);
+      return {
+        jobId: job.id,
+        status: await job.getState(),
+        progress: job.progress(),
+      };
+    } catch (error) {
+      throw new BadRequestException('Job not found');
+    }
   }
 }

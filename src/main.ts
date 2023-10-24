@@ -9,6 +9,9 @@ async function bootstrap() {
     prefix: 'api/v',
     defaultVersion: '1',
   });
+  app.enableCors({
+    origin: '*',
+  });
   await app.listen(3000);
 }
 bootstrap();
