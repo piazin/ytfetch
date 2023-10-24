@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
 import { VideoService } from './video.service';
+import { VideoProcessor } from './video.processor';
 import { VideoController } from './video.controller';
-import { VideoProcessor } from './video.consumer';
 import { EventsModule } from 'src/events/events.module';
 
 @Module({

@@ -13,7 +13,7 @@
     <script>
       const Events = Object.freeze({
         FAILED_VIDEO_DOWNLOAD: 'failed_video_download',
-        STATED_VIDEO_DOWNLOAD: 'stated_video_download',
+        VIDEO_DOWNLOAD_STARTED: 'video_download_started',
         FINISHED_VIDEO_DOWNLOAD: 'finished_video_download',
       });
 
@@ -31,8 +31,8 @@
         })
           .then((response) => response.json())
           .then((data) => {
-            console.log(data.data.jobId);
-            jobId = data.data.jobId;
+            console.log(data.jobId);
+            jobId = data.jobId;
           })
           .catch((error) => {
             console.error('Error:', error);
@@ -43,6 +43,11 @@
 
       socket.on('connect', function () {
         console.log('Connected');
+      });
+      socket.on(Events.VIDEO_DOWNLOAD_STARTED, function (data) {
+        if (data.jobId === jobId) {
+          console.log('event', data);
+        }
       });
       socket.on(Events.FINISHED_VIDEO_DOWNLOAD, function (data) {
         if (data.jobId === jobId) {

@@ -1,9 +1,4 @@
 import { VideoService } from './video.service';
-import {
-  Response,
-  VideoJobResponse,
-  VideoProcessResponse,
-} from 'src/responses';
 import { CreateVideoDownloadDto } from '@dto/video';
 import {
   Body,
@@ -21,25 +16,23 @@ export class VideoController {
 
   @HttpCode(HttpStatus.OK)
   @Post()
-  async processVideoDownload(
+  async createVideoDownloadJob(
     @Body() createVideoDownloadDto: CreateVideoDownloadDto,
   ) {
     const { jobId } = await this.videoService.addToQueue(
       createVideoDownloadDto,
     );
 
-    return new Response<VideoProcessResponse>({
-      status: HttpStatus.OK,
-      data: { jobId },
-    });
+    return {
+      jobId,
+    };
   }
 
   @Get(':jobId')
-  async getJobState(@Param('jobId') jobId: string) {
-    const job = await this.videoService.getJobState(jobId);
-    return new Response<VideoJobResponse>({
-      status: HttpStatus.OK,
-      data: job,
-    });
+  async getJobStatus(@Param('jobId') jobId: string) {
+    const job = await this.videoService.getJobStatus(jobId);
+    return {
+      job,
+    };
   }
 }

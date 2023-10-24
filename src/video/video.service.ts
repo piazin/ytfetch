@@ -27,7 +27,7 @@ export class VideoService {
     };
   }
 
-  async getJobState(jobId: string) {
+  async getJobStatus(jobId: string) {
     try {
       const job = await this.videoDownloadQueue.getJob(jobId);
       return {
