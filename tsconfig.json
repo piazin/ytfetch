@@ -20,7 +20,7 @@
     "paths": {
       "@dto/video": ["src/video/dto/"],
       "@if/video": ["src/video/interfaces/"],
-      "@res": ["src/responses"]
+      "@utils/*": ["src/utils/*"]
     }
   }
 }

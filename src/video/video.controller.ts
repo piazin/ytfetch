@@ -9,6 +9,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
   StreamableFile,
 } from '@nestjs/common';
 import { join } from 'path';
@@ -18,7 +19,12 @@ import { createReadStream } from 'fs';
 export class VideoController {
   constructor(private readonly videoService: VideoService) {}
 
-  @HttpCode(HttpStatus.OK)
+  @Get()
+  async getVideoDetails(@Query('videoUrl') videoUrl: string) {
+    const videoDetails = this.videoService.getVideoDetails(videoUrl);
+    return videoDetails;
+  }
+
   @Post()
   async createVideoDownloadJob(
     @Body() createVideoDownloadDto: CreateVideoDownloadDto,

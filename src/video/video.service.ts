@@ -3,14 +3,31 @@ import { Video } from '@if/video';
 import { randomUUID } from 'crypto';
 import { InjectQueue } from '@nestjs/bull';
 import { CreateVideoDownloadDto } from '@dto/video';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { getVideoDetails } from '@utils/getVideoDetails';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class VideoService {
+  private readonly logger: Logger = new Logger(VideoService.name);
+
   constructor(
     @InjectQueue('video-download-queue')
     private videoDownloadQueue: Queue<Video>,
   ) {}
+
+  async getVideoDetails(videoUrl: string) {
+    try {
+      const { thumbnails, title, video_url } = await getVideoDetails(videoUrl);
+      return {
+        title,
+        thumbnails,
+        video_url,
+      };
+    } catch (error) {
+      this.logger.error(error.message);
+      throw new BadRequestException('Não foi possivel encontrar o vídeo');
+    }
+  }
 
   async addToQueue({ youtubeVideoUrl }: CreateVideoDownloadDto) {
     const jobId = randomUUID();
