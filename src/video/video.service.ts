@@ -17,11 +17,14 @@ export class VideoService {
 
   async getVideoDetails(videoUrl: string) {
     try {
-      const { thumbnails, title, video_url } = await getVideoDetails(videoUrl);
+      const { thumbnails, title, video_url, videoId, formats } =
+        await getVideoDetails(videoUrl);
       return {
         title,
         thumbnails,
         video_url,
+        videoId,
+        formats,
       };
     } catch (error) {
       this.logger.error(error.message);
