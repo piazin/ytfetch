@@ -1,5 +1,6 @@
 import { AppModule } from './app.module';
 import { NestFactory } from '@nestjs/core';
+import { ClusterService } from './cluster.service';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 
 async function bootstrap() {
@@ -16,3 +17,4 @@ async function bootstrap() {
   await app.listen(3000);
 }
 bootstrap();
+// ClusterService.clusterize(bootstrap);

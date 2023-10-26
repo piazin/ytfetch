@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { Video } from '@if/video';
-import * as ytdl from 'ytdl-core';
+import ytdl from 'ytdl-core';
 import { randomUUID } from 'crypto';
 import { traceStreamProgress } from './traceStreamProgress';
 
@@ -27,7 +27,8 @@ export async function downloadVideoFromYoutube(
   traceProgress?: ProgressCallback,
 ) {
   try {
-    const videoPath = `${process.cwd()}/videos/${randomUUID()}.mp4`;
+    const videoId = `${randomUUID()}.mp4`;
+    const videoPath = `${process.cwd()}/videos/${videoId}`;
 
     const videoStream = ytdl(youtubeVideoUrl, { quality: 18 });
 
@@ -43,9 +44,11 @@ export async function downloadVideoFromYoutube(
       });
 
       videoStream.on('end', () => {
-        resolve(videoPath);
+        resolve(videoId);
       });
     });
+
+    return videoId;
   } catch (error) {
     console.error(error);
     throw error;

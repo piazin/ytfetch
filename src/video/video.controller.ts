@@ -47,12 +47,11 @@ export class VideoController {
   }
 
   @HttpCode(HttpStatus.PARTIAL_CONTENT)
-  @Get(':jobId/download')
+  @Get(':videoId/download')
   @Header('Content-Type', 'apllication/json')
-  async downloadVideo(@Param('jobId') jobId: string) {
-    const file = createReadStream(
-      join(process.cwd(), 'videos', '1d9a6fe4-e388-44a0-89c4-ec229507e8c1.mp4'),
-    );
+  async downloadVideo(@Param('videoId') videoId: string) {
+    console.log(videoId);
+    const file = createReadStream(join(process.cwd(), 'videos', videoId));
     return new StreamableFile(file);
   }
 }

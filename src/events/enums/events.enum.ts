@@ -3,4 +3,5 @@ export enum Events {
   VIDEO_DOWNLOAD_STARTED = 'video_download_started',
   FINISHED_VIDEO_DOWNLOAD = 'finished_video_download',
   VIDEO_DOWNLOAD_PROGRESS = 'video_download_progress',
+  DELETE_VIDEO = 'delete_video',
 }

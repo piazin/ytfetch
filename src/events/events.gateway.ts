@@ -1,10 +1,14 @@
 import { Logger } from '@nestjs/common';
 import {
+  MessageBody,
   OnGatewayConnection,
+  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
+import { Events } from './enums/events.enum';
+import { removeVideo } from '@utils/removeVideo';
 
 @WebSocketGateway({ cors: '*' })
 /**
@@ -30,5 +34,10 @@ export class EventsGateway implements OnGatewayConnection {
 
   handleConnection(client: any, ...args: any[]) {
     this.logger.log(`Client connected: ${client.id}`);
+  }
+
+  @SubscribeMessage(Events.DELETE_VIDEO)
+  async handleDeleteVide(@MessageBody('videoId') videoId: string) {
+    await removeVideo(videoId);
   }
 }
