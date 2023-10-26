@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import { Video } from '@if/video';
 import * as ytdl from 'ytdl-core';
+import { randomUUID } from 'crypto';
 import { traceStreamProgress } from './traceStreamProgress';
 
 export type ProgressCallback = ({
@@ -26,14 +27,7 @@ export async function downloadVideoFromYoutube(
   traceProgress?: ProgressCallback,
 ) {
   try {
-    const video = await ytdl.getInfo(youtubeVideoUrl);
-    const videoPath = `${process.cwd()}/videos/${
-      video.videoDetails.title
-    }${Date.now()}.mp4`;
-
-    if (fs.existsSync(videoPath)) {
-      return videoPath;
-    }
+    const videoPath = `${process.cwd()}/videos/${randomUUID()}.mp4`;
 
     const videoStream = ytdl(youtubeVideoUrl, { quality: 18 });
 
@@ -53,6 +47,7 @@ export async function downloadVideoFromYoutube(
       });
     });
   } catch (error) {
+    console.error(error);
     throw error;
   }
 }

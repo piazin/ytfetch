@@ -9,8 +9,8 @@ import { Job } from 'bull';
 import { Video } from '@if/video';
 import { Logger } from '@nestjs/common';
 import { Events } from 'src/events/enums/events.enum';
-import { downloadVideoFromYoutube } from '../utils/downloadVideo';
 import { EventsGateway } from '../events/events.gateway';
+import { downloadVideoFromYoutube } from '../utils/downloadVideo';
 
 /**
  * @description A classe VideoProcessor é um processador de filas, que é responsável por processar os jobs da fila
@@ -30,10 +30,12 @@ export class VideoProcessor {
       // quando usado a extensão live server do vscode, a pagina fica recarregando e não envia os eventos, use o html direto no navegador
       const videoPath = await downloadVideoFromYoutube(
         job.data,
-        ({ downloadedMb, percentage }) => {
+        ({ downloadedMb, percentage, estimatedDownloadTime }) => {
           this.eventsGateway.pusblishEvent(Events.VIDEO_DOWNLOAD_PROGRESS, {
             jobId: job.id,
             percentage: (percentage * 100).toFixed(0),
+            downloadedMb,
+            estimatedDownloadTime,
           });
         },
       );

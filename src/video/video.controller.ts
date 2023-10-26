@@ -29,7 +29,6 @@ export class VideoController {
   async createVideoDownloadJob(
     @Body() createVideoDownloadDto: CreateVideoDownloadDto,
   ) {
-    console.log(createVideoDownloadDto);
     const { jobId } = await this.videoService.addToQueue(
       createVideoDownloadDto,
     );
@@ -51,7 +50,9 @@ export class VideoController {
   @Get(':jobId/download')
   @Header('Content-Type', 'apllication/json')
   async downloadVideo(@Param('jobId') jobId: string) {
-    const file = createReadStream(join(process.cwd(), 'package.json'));
+    const file = createReadStream(
+      join(process.cwd(), 'videos', '1d9a6fe4-e388-44a0-89c4-ec229507e8c1.mp4'),
+    );
     return new StreamableFile(file);
   }
 }
