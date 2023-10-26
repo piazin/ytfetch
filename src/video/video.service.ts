@@ -32,19 +32,22 @@ export class VideoService {
     }
   }
 
-  async addToQueue({ youtubeVideoUrl }: CreateVideoDownloadDto) {
-    const jobId = randomUUID();
+  async addToQueue(createVideoDownloadDto: CreateVideoDownloadDto) {
+    try {
+      const jobId = randomUUID();
 
-    const createdJob = await this.videoDownloadQueue.add(
-      {
-        youtubeVideoUrl,
-      },
-      { jobId },
-    );
+      const createdJob = await this.videoDownloadQueue.add(
+        createVideoDownloadDto,
+        { jobId },
+      );
 
-    return {
-      jobId: createdJob.id,
-    };
+      return {
+        jobId: createdJob.id,
+      };
+    } catch (error) {
+      this.logger.error(error.message);
+      throw new BadRequestException('Não foi possivel baixar o vídeo');
+    }
   }
 
   async getJobStatus(jobId: string) {
@@ -56,6 +59,7 @@ export class VideoService {
         progress: job.progress(),
       };
     } catch (error) {
+      this.logger.error(error.message);
       throw new BadRequestException('Job not found');
     }
   }

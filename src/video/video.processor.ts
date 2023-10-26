@@ -26,12 +26,20 @@ export class VideoProcessor {
 
   @Process()
   async download(job: Job<Video>) {
-    const { youtubeVideoUrl } = job.data;
     try {
       // quando usado a extensão live server do vscode, a pagina fica recarregando e não envia os eventos, use o html direto no navegador
-      const videoPath = await downloadVideoFromYoutube(youtubeVideoUrl);
+      const videoPath = await downloadVideoFromYoutube(
+        job.data,
+        ({ downloadedMb, percentage }) => {
+          this.eventsGateway.pusblishEvent(Events.VIDEO_DOWNLOAD_PROGRESS, {
+            jobId: job.id,
+            percentage: (percentage * 100).toFixed(0),
+          });
+        },
+      );
       return videoPath;
     } catch (error) {
+      this.logger.error(error.message);
       job.moveToFailed({ message: error.message });
     }
   }

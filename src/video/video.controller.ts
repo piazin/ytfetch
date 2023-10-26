@@ -29,6 +29,7 @@ export class VideoController {
   async createVideoDownloadJob(
     @Body() createVideoDownloadDto: CreateVideoDownloadDto,
   ) {
+    console.log(createVideoDownloadDto);
     const { jobId } = await this.videoService.addToQueue(
       createVideoDownloadDto,
     );

@@ -5,7 +5,7 @@ function isQualityAccepted({ qualityLabel }: ytdl.videoFormat) {
 }
 
 function isFormatAccepted({ container }: ytdl.videoFormat) {
-  return container === 'mp4';
+  return container === 'mp4' || container === 'webm';
 }
 
 function removeDuplicateFormats(originalFormatArray: ytdl.videoFormat[]) {

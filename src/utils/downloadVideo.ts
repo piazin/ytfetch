@@ -1,5 +1,19 @@
 import * as fs from 'fs';
+import { Video } from '@if/video';
 import * as ytdl from 'ytdl-core';
+import { traceStreamProgress } from './traceStreamProgress';
+
+export type ProgressCallback = ({
+  percentage,
+  downloadMinutes,
+  downloadedMb,
+  estimatedDownloadTime,
+}: {
+  percentage: number;
+  downloadMinutes?: number;
+  downloadedMb?: string;
+  estimatedDownloadTime?: number;
+}) => void;
 
 /**
  * @description Downloads a video from YouTube
@@ -8,33 +22,37 @@ import * as ytdl from 'ytdl-core';
  * @returns The path to the downloaded video
  */
 export async function downloadVideoFromYoutube(
-  youtubeVideoUrl: string,
-  traceProgress?: (progress: number) => void,
+  { youtubeVideoUrl, qualityLabel, type }: Video,
+  traceProgress?: ProgressCallback,
 ) {
-  return new Promise(async (resolve, reject) => {
+  try {
     const video = await ytdl.getInfo(youtubeVideoUrl);
-    const videoPath = `${process.cwd()}/videos/${video.videoDetails.title}.mp4`;
+    const videoPath = `${process.cwd()}/videos/${
+      video.videoDetails.title
+    }${Date.now()}.mp4`;
 
     if (fs.existsSync(videoPath)) {
-      return resolve(videoPath);
+      return videoPath;
     }
-    console.log(video.formats[0].contentLength);
-    const videoStream = ytdl(youtubeVideoUrl, {
-      quality: 'highest',
-    });
 
-    videoStream.on('data', (chunk) => {
-      traceProgress(chunk.length);
-    });
+    const videoStream = ytdl(youtubeVideoUrl, { quality: 18 });
 
     videoStream.pipe(fs.createWriteStream(videoPath));
 
-    videoStream.on('error', (error) => {
-      reject(error);
-    });
+    if (traceProgress) {
+      traceStreamProgress(videoStream, traceProgress);
+    }
 
-    videoStream.on('end', () => {
-      resolve(videoPath);
+    await new Promise((resolve, reject) => {
+      videoStream.on('error', (error) => {
+        reject(error);
+      });
+
+      videoStream.on('end', () => {
+        resolve(videoPath);
+      });
     });
-  });
+  } catch (error) {
+    throw error;
+  }
 }
