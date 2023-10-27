@@ -10,13 +10,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     VideoModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env.development'],
+      // envFilePath: ['.env.development'],
     }),
     BullModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({
         redis: {
           host: configService.get<string>('QUEUE_HOST'),
           port: configService.get<number>('QUEUE_PORT'),
+          username: configService.get<string>('QUEUE_USERNAME'),
+          password: configService.get<string>('QUEUE_PASSWORD'),
         },
       }),
       inject: [ConfigService],

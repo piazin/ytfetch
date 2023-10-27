@@ -1,10 +1,18 @@
 import { Queue } from 'bull';
 import { Video } from '@if/video';
+import fs from 'node:fs/promises';
 import { randomUUID } from 'crypto';
 import { InjectQueue } from '@nestjs/bull';
 import { CreateVideoDownloadDto } from '@dto/video';
 import { getVideoDetails } from '@utils/getVideoDetails';
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
+import { join } from 'node:path';
+import { ReadStream, createReadStream } from 'node:fs';
 
 @Injectable()
 export class VideoService {
@@ -29,6 +37,18 @@ export class VideoService {
     } catch (error) {
       this.logger.error(error.message);
       throw new BadRequestException('Não foi possivel encontrar o vídeo');
+    }
+  }
+
+  async downloadVideo(videoId: string) {
+    try {
+      const fullPath = join(process.cwd(), 'videos', videoId);
+      await fs.access(fullPath, fs.constants.F_OK);
+
+      return createReadStream(fullPath);
+    } catch (error) {
+      this.logger.error(error.message);
+      throw new NotFoundException('Não foi possivel encontrar o vídeo');
     }
   }
 
