@@ -1,73 +1,52 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# YTFetch - API de Download de Vídeos do YouTube
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+YTFetch é uma API desenvolvida em Nest.js que permite fazer o download de vídeos do YouTube usando filas implementadas com Bull e Redis. Esta documentação fornecerá informações sobre como configurar, executar e usar a API.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Pré-requisitos
 
-## Description
+Certifique-se de que você tenha as seguintes dependências instaladas antes de prosseguir:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Node.js
+Redis Server
 
-## Installation
+## Funcionalidades
+
+- Download de Vídeos: Faça o download de vídeos do YouTube facilmente usando a API do YTFetch.
+- Fila de Tarefas: Utilize filas para gerenciar e processar os pedidos de download de forma eficiente.
+- Redis para Armazenamento: Armazene dados da fila e informações de estado no Redis para melhor desempenho e confiabilidade.
+
+## Instalação
+
+Clone o repositório do YTFetch.
 
 ```bash
-$ pnpm install
+  git clone https://github.com/seuusuario/ytfetch.git
+  cd ytfetch
 ```
 
-## Running the app
+Instale as dependências do projeto.
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+    pnpm i
 ```
 
-## Test
+Inicie o servidor
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+    pnpm run start:dev
 ```
 
-## Support
+A API estará disponível em http://localhost:3000 por padrão
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Variáveis de Ambiente
 
-## Stay in touch
+Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de ambiente no seu .env
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+`QUEUE_HOST=127.0.0.1`
+`QUEUE_PORT=6379`
+`QUEUE_USERNAME=user`
+`QUEUE_PASSWORD=123`
 
-## License
+## Documentação
 
-Nest is [MIT licensed](LICENSE).
+[Documentação](http://localhost:3000/docs)
