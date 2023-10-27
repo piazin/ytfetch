@@ -20,6 +20,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           username: configService.get<string>('QUEUE_USERNAME'),
           password: configService.get<string>('QUEUE_PASSWORD'),
         },
+        defaultJobOptions: {
+          removeOnComplete: true,
+          removeOnFail: true,
+        },
       }),
       inject: [ConfigService],
     }),
