@@ -11,7 +11,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath:
-        process.env.NODE_ENV === 'production' ? '.env' : '.env.development',
+        process.env.NODE_ENV === 'development' ? '.env.development' : '.env',
     }),
     BullModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({

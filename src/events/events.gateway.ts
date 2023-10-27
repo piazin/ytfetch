@@ -12,9 +12,9 @@ import { removeVideo } from '@utils/removeVideo';
 
 @WebSocketGateway({
   cors:
-    process.env.NODE_ENV === 'production'
-      ? 'https://yt-fetch.lucasouza.tech'
-      : '*',
+    process.env.NODE_ENV === 'development'
+      ? '*'
+      : 'https://yt-fetch.lucasouza.tech',
 })
 /**
  * @description A gateway that handles the events of the application
