@@ -10,7 +10,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     VideoModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      // envFilePath: ['.env.development'],
+      envFilePath:
+        process.env.NODE_ENV === 'production' ? '.env' : '.env.development',
     }),
     BullModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({

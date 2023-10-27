@@ -10,7 +10,12 @@ import { Server } from 'socket.io';
 import { Events } from './enums/events.enum';
 import { removeVideo } from '@utils/removeVideo';
 
-@WebSocketGateway({ cors: '*' })
+@WebSocketGateway({
+  cors:
+    process.env.NODE_ENV === 'production'
+      ? 'https://yt-fetch.lucasouza.tech'
+      : '*',
+})
 /**
  * @description A gateway that handles the events of the application
  * @method pusblishEvent Publishes an event to all connected clients
