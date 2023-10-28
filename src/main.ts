@@ -1,3 +1,4 @@
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { NestFactory } from '@nestjs/core';
 import { ClusterService } from './cluster.service';
@@ -13,8 +14,10 @@ async function bootstrap() {
     defaultVersion: '1',
   });
 
+  app.use(helmet());
+
   app.enableCors({
-    origin: '*',
+    origin: 'https://yt-fetch.lucasouza.tech',
   });
 
   app.useGlobalPipes(new ValidationPipe());
