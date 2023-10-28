@@ -17,7 +17,10 @@ async function bootstrap() {
   app.use(helmet());
 
   app.enableCors({
-    origin: 'https://yt-fetch.lucasouza.tech',
+    origin:
+      process.env.NODE_ENV == 'development'
+        ? '*'
+        : 'https://yt-fetch.lucasouza.tech',
   });
 
   app.useGlobalPipes(new ValidationPipe());
