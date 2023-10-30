@@ -12,8 +12,7 @@ import {
   Query,
   StreamableFile,
 } from '@nestjs/common';
-import { join } from 'path';
-import { createReadStream } from 'fs';
+
 import {
   ApiBadRequestResponse,
   ApiBody,

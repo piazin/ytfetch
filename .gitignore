@@ -39,3 +39,4 @@ lerna-debug.log*
 
 # folders
 /videos/*.mp4
+/videos/*.mp3

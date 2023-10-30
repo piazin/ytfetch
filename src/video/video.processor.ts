@@ -10,6 +10,8 @@ import { Video } from '@if/video';
 import { Logger } from '@nestjs/common';
 import { Events } from 'src/events/enums/events.enum';
 import { EventsGateway } from '../events/events.gateway';
+
+import { downloadAudio } from '@utils/downloadAudio';
 import { downloadVideoFromYoutube } from '../utils/downloadVideo';
 
 /**
@@ -28,6 +30,23 @@ export class VideoProcessor {
   async download(job: Job<Video>) {
     try {
       // quando usado a extensão live server do vscode, a pagina fica recarregando e não envia os eventos, use o html direto no navegador
+      const convertVideoToMp3 = job.data.type === 'mp3';
+      if (convertVideoToMp3) {
+        const audioId = downloadAudio(
+          job.data.youtubeVideoUrl,
+          ({ downloadedMb, percentage, estimatedDownloadTime }) => {
+            this.eventsGateway.pusblishEvent(Events.VIDEO_DOWNLOAD_PROGRESS, {
+              jobId: job.id,
+              percentage: (percentage * 100).toFixed(0),
+              downloadedMb,
+              estimatedDownloadTime,
+            });
+          },
+        );
+
+        return audioId;
+      }
+
       const videoId = await downloadVideoFromYoutube(
         job.data,
         ({ downloadedMb, percentage, estimatedDownloadTime }) => {
