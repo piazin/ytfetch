@@ -18,7 +18,16 @@ function removeDuplicateFormats(originalFormatArray: ytdl.videoFormat[]) {
 
 export async function getVideoDetails(videoUrl: string) {
   try {
-    const video = await ytdl.getInfo(videoUrl);
+    const cookie =
+      'SIDCC=AKEyXzVXXkle56gzr_gQAIGN_CLQai5P1U9lhSwIZ2Y6pE0GP1CTdm7bi90Xc5FJdfFUml-CcA; __Secure-1PSIDCC=AKEyXzUAeQ09qr7xjJvY5jDi3GLKRAmbTQDqBMsrU_76d2LGl9TsG4WfeLKTdizRa8sYxUhEpV4; __Secure-3PSIDCC=AKEyXzXF2W6of4ae5RdwMALtUmYgfLpZWZ5zVwCrgF1pEk_2jBlAmN5tfhlz1RlKBefBs8mgrP8;';
+
+    const video = await ytdl.getInfo(videoUrl, {
+      requestOptions: {
+        headers: {
+          cookie,
+        },
+      },
+    });
 
     const formats = removeDuplicateFormats(video.formats)
       .filter((f, i) => isFormatAccepted(f) && isQualityAccepted(f))
