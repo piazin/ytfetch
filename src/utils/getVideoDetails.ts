@@ -1,14 +1,16 @@
 import * as ytdl from 'ytdl-core';
 
-function isQualityAccepted({ qualityLabel }: ytdl.videoFormat) {
+export function isQualityAccepted({ qualityLabel }: ytdl.videoFormat) {
   return ['1080p', '720p', '480p'].includes(qualityLabel);
 }
 
-function isFormatAccepted({ container }: ytdl.videoFormat) {
+export function isFormatAccepted({ container }: ytdl.videoFormat) {
   return container === 'mp4' || container === 'webm';
 }
 
-function removeDuplicateFormats(originalFormatArray: ytdl.videoFormat[]) {
+export function removeDuplicateFormats(
+  originalFormatArray: ytdl.videoFormat[],
+) {
   const formats = originalFormatArray.map(({ qualityLabel }) => qualityLabel);
   const filtered = originalFormatArray.filter(
     ({ qualityLabel }, index) => !formats.includes(qualityLabel, index + 1),

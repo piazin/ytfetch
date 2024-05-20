@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { Video } from '@if/video';
+import { QueueVideo } from '@if/video';
 import ytdl from 'ytdl-core';
 import { randomUUID } from 'crypto';
 import { traceStreamProgress } from './traceStreamProgress';
@@ -23,7 +23,7 @@ export type ProgressCallback = ({
  * @returns The path to the downloaded video
  */
 export async function downloadVideoFromYoutube(
-  { youtubeVideoUrl, qualityLabel, type }: Video,
+  { youtubeVideoUrl, qualityLabel, type }: QueueVideo,
   traceProgress?: ProgressCallback,
 ) {
   try {

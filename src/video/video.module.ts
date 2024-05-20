@@ -1,9 +1,8 @@
+import { Providers } from './mod';
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
-import { VideoService } from './video.service';
-import { VideoProcessor } from './video.processor';
 import { VideoController } from './video.controller';
-import { EventsModule } from 'src/events/events.module';
+import { EventsModule } from '../events/events.module';
 
 @Module({
   imports: [
@@ -13,6 +12,7 @@ import { EventsModule } from 'src/events/events.module';
     EventsModule,
   ],
   controllers: [VideoController],
-  providers: [VideoService, VideoProcessor],
+  providers: [...Providers],
+  exports: [...Providers],
 })
 export class VideoModule {}

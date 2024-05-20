@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import {
   MessageBody,
   OnGatewayConnection,
@@ -8,7 +8,7 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { Events } from './enums/events.enum';
-import { removeVideo } from '@utils/removeVideo';
+import { VideoPort } from '../video/ports/video.port';
 
 @WebSocketGateway({
   cors:
@@ -25,6 +25,11 @@ export class EventsGateway implements OnGatewayConnection {
   @WebSocketServer()
   private server: Server;
   private readonly logger = new Logger(EventsGateway.name);
+
+  constructor(
+    @Inject('VideoAdapter')
+    private readonly videoAdapter: VideoPort,
+  ) {}
 
   pusblishEvent(event: string, data: any, options?: { delay?: number }) {
     if (options?.delay) {
@@ -43,6 +48,6 @@ export class EventsGateway implements OnGatewayConnection {
 
   @SubscribeMessage(Events.DELETE_VIDEO)
   async handleDeleteVide(@MessageBody('videoId') videoId: string) {
-    await removeVideo(videoId);
+    await this.videoAdapter.deleteVideo(videoId);
   }
 }

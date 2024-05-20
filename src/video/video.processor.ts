@@ -6,13 +6,11 @@ import {
   OnQueueFailed,
 } from '@nestjs/bull';
 import { Job } from 'bull';
-import { Video } from '@if/video';
-import { Logger } from '@nestjs/common';
-import { Events } from 'src/events/enums/events.enum';
+import { QueueVideo } from '@if/video';
+import { Inject, Logger } from '@nestjs/common';
+import { Events } from '../events/enums/events.enum';
 import { EventsGateway } from '../events/events.gateway';
-
-import { downloadAudio } from '@utils/downloadAudio';
-import { downloadVideoFromYoutube } from '../utils/downloadVideo';
+import { VideoExternalPort } from './ports/video-external.port';
 
 /**
  * @description A classe VideoProcessor é um processador de filas, que é responsável por processar os jobs da fila
@@ -24,15 +22,19 @@ import { downloadVideoFromYoutube } from '../utils/downloadVideo';
 @Processor('video-download-queue')
 export class VideoProcessor {
   private logger: Logger = new Logger(VideoProcessor.name);
-  constructor(private eventsGateway: EventsGateway) {}
+  constructor(
+    private eventsGateway: EventsGateway,
+    @Inject('VideoExternalAdapter')
+    private readonly videoExternalAdapter: VideoExternalPort,
+  ) {}
 
   @Process()
-  async download(job: Job<Video>) {
+  async download(job: Job<QueueVideo>) {
     try {
       // quando usado a extensão live server do vscode, a pagina fica recarregando e não envia os eventos, use o html direto no navegador
       const convertVideoToMp3 = job.data.type === 'mp3';
       if (convertVideoToMp3) {
-        const audioId = downloadAudio(
+        const audioId = await this.videoExternalAdapter.convertVideoToMp3(
           job.data.youtubeVideoUrl,
           ({ downloadedMb, percentage, estimatedDownloadTime }) => {
             this.eventsGateway.pusblishEvent(Events.VIDEO_DOWNLOAD_PROGRESS, {
@@ -47,7 +49,7 @@ export class VideoProcessor {
         return audioId;
       }
 
-      const videoId = await downloadVideoFromYoutube(
+      const videoId = await this.videoExternalAdapter.downloadVideoFromYoutube(
         job.data,
         ({ downloadedMb, percentage, estimatedDownloadTime }) => {
           this.eventsGateway.pusblishEvent(Events.VIDEO_DOWNLOAD_PROGRESS, {
@@ -78,7 +80,7 @@ export class VideoProcessor {
   }
 
   @OnQueueCompleted()
-  onCompleted(job: Job<Video>) {
+  onCompleted(job: Job<QueueVideo>) {
     this.logger.debug(`Job ${job.id} completed ${job.returnvalue}}`);
 
     this.eventsGateway.pusblishEvent(Events.FINISHED_VIDEO_DOWNLOAD, {

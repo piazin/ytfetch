@@ -1,86 +1,51 @@
-import { Queue } from 'bull';
-import { Video } from '@if/video';
-import fs from 'node:fs/promises';
-import { randomUUID } from 'crypto';
-import { InjectQueue } from '@nestjs/bull';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { VideoPort } from './ports/video.port';
 import { CreateVideoDownloadDto } from '@dto/video';
-import { getVideoDetails } from '@utils/getVideoDetails';
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
-import { join } from 'node:path';
-import { ReadStream, createReadStream } from 'node:fs';
 
 @Injectable()
 export class VideoService {
   private readonly logger: Logger = new Logger(VideoService.name);
 
   constructor(
-    @InjectQueue('video-download-queue')
-    private videoDownloadQueue: Queue<Video>,
+    @Inject('VideoAdapter')
+    private readonly videoAdapter: VideoPort,
   ) {}
 
   async getVideoDetails(videoUrl: string) {
     try {
-      const { thumbnails, title, video_url, videoId, formats } =
-        await getVideoDetails(videoUrl);
-      return {
-        title,
-        thumbnails,
-        video_url,
-        videoId,
-        formats,
-      };
+      return await this.videoAdapter.getDetails(videoUrl);
     } catch (error) {
       this.logger.error(error.message);
-      throw new BadRequestException('Não foi possivel encontrar o vídeo');
+      throw error;
     }
   }
 
   async downloadVideo(videoId: string) {
     try {
-      const fullPath = join(process.cwd(), 'videos', videoId);
-      await fs.access(fullPath, fs.constants.F_OK);
-
-      return createReadStream(fullPath);
+      return await this.videoAdapter.downloadVideo(videoId);
     } catch (error) {
       this.logger.error(error.message);
-      throw new NotFoundException('Não foi possivel encontrar o vídeo');
+      throw error;
     }
   }
 
   async addToQueue(createVideoDownloadDto: CreateVideoDownloadDto) {
     try {
-      const jobId = randomUUID();
-
-      const createdJob = await this.videoDownloadQueue.add(
+      return await this.videoAdapter.enqueueVideoDownload(
         createVideoDownloadDto,
-        { jobId },
       );
-
-      return {
-        jobId: createdJob.id,
-      };
     } catch (error) {
       this.logger.error(error.message);
-      throw new BadRequestException('Não foi possivel baixar o vídeo');
+      throw error;
     }
   }
 
   async getJobStatus(jobId: string) {
     try {
-      const job = await this.videoDownloadQueue.getJob(jobId);
-      return {
-        jobId: job.id,
-        status: await job.getState(),
-        progress: job.progress(),
-      };
+      return await this.videoAdapter.getVideoDownloadStatus(jobId);
     } catch (error) {
       this.logger.error(error.message);
-      throw new BadRequestException('Job not found');
+      throw error;
     }
   }
 }

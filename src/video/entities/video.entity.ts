@@ -1,11 +1,22 @@
 export class Video {
-    youtubeVideoUrl: string;
-    qualityLabel: '1080p' | '720p' | '480p';
-    type: 'mp4' | 'webm' | 'mp3';
+  title: string;
+  thumbnails: Array<IThumbnails>;
+  videoUrl: string;
+  videoId: string;
+  formats: Array<IFormats>;
+}
 
-    constructor(youtubeVideoUrl: string, qualityLabel: '1080p' | '720p' | '480p', type: 'mp4' | 'webm' | 'mp3') {
-        this.youtubeVideoUrl = youtubeVideoUrl;
-        this.qualityLabel = qualityLabel;
-        this.type = type;
-    }
+interface IThumbnails {
+  url: string;
+  width: number;
+  height: number;
+}
+
+interface IFormats {
+  width: number;
+  height: number;
+  container: string;
+  mimeType: string;
+  qualityLabel: string;
+  approxDurationMs: string | number;
 }
