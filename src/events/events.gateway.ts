@@ -14,7 +14,7 @@ import { VideoPort } from '../video/ports/video.port';
   cors:
     process.env.NODE_ENV === 'development'
       ? '*'
-      : 'https://yt-fetch.lucasouza.tech',
+      : 'https://ytfetch.onrender.com',
 })
 /**
  * @description A gateway that handles the events of the application

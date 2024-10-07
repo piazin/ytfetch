@@ -20,7 +20,7 @@ async function bootstrap() {
     origin:
       process.env.NODE_ENV == 'development'
         ? '*'
-        : 'https://yt-fetch.lucasouza.tech',
+        : 'https://ytfetch.onrender.com',
   });
 
   app.useGlobalPipes(new ValidationPipe());
