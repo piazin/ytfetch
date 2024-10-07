@@ -12,9 +12,7 @@ import { VideoPort } from '../video/ports/video.port';
 
 @WebSocketGateway({
   cors:
-    process.env.NODE_ENV === 'development'
-      ? '*'
-      : 'https://ytfetch.onrender.com',
+    process.env.NODE_ENV === 'development' ? '*' : 'https://ytfetch.vercel.app',
 })
 /**
  * @description A gateway that handles the events of the application

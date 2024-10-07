@@ -20,7 +20,7 @@ async function bootstrap() {
     origin:
       process.env.NODE_ENV == 'development'
         ? '*'
-        : 'https://ytfetch.onrender.com',
+        : 'https://ytfetch.vercel.app',
   });
 
   app.useGlobalPipes(new ValidationPipe());
